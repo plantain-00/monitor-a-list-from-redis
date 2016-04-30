@@ -1,0 +1,24 @@
+{
+  "name": "monitor-a-list-from-redis",
+  "version": "1.0.0",
+  "description": "A simple tool to watch some realtime data from a redis source",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plantain-00/monitor-a-list-from-redis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plantain-00/monitor-a-list-from-redis/issues"
+  },
+  "homepage": "https://github.com/plantain-00/monitor-a-list-from-redis#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "ioredis": "^1.15.1",
+    "socket.io": "^1.4.5"
+  }
+}
