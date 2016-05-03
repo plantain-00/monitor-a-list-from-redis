@@ -6,6 +6,7 @@ var historyContext = document.getElementById("historyChart").getContext("2d");
 var historyChart;
 
 Chart.defaults.global.responsive = false;
+Chart.defaults.global.animation.duration = 0;
 
 var sources = [
     { label: "http request" },
