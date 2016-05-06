@@ -5,14 +5,65 @@ A simple tool to watch some realtime data from a redis source
 
 #### 1. for each node, count in current process
 
-eg, you have `httpRequestCount` and `wsMessageReceivedCount` in every node.
+eg, you have `httpRequestsCount` and `wsMessagesReceivedCount` in every node.
 
-#### 2. for each node, set a timer, every 1 second, increase the count in a redis string
+#### 2. for each node, set a timer, every 1 second, push all the counts to a temperary redis list
 
-eg, store them as string in redis, the keys of the strings are `counts:http:request` and `counts:ws:message:received`.
+eg, the data format looks like:
+```json
+{
+    "host": "#1",
+    "port": 9000,
+    "counts": {
+        "http requests": 1,
+        "ws messages received": 2,
+    },
+}
+```
 
-#### 3. set a global timer, every 1 second, get the counts, and push them(array, serialized to a string) to the list
+#### 3. set a global timer, every 1 second, get all the data from the temperary list, and push them(serialized to a JSON string) to a final list
 
-eg, the key of the list is `counts`, and the value should be like `"[1,2]"`
+eg, the data format looks like:
+```json
+{
+    "time": "09:00:00",
+    "nodes": [
+        {
+            "host": "#1",
+            "port": 9000,
+            "counts": {
+                "http requests": 1,
+                "ws messages received": 2,
+            },
+        },
+        {
+            "host": "#1",
+            "port": 9001,
+            "counts": {
+                "http requests": 3,
+                "ws messages received": 4,
+            },
+        },
+        {
+            "host": "#2",
+            "port": 9000,
+            "counts": {
+                "http requests": 5,
+                "ws messages received": 6,
+            },
+        },
+        {
+            "host": "#2",
+            "port": 9001,
+            "counts": {
+                "http requests": 7,
+                "ws messages received": 8,
+            },
+        }
+    ]
+}
+```
 
-if the list's length > 60, remove the last element, it just keep the data of recent 60 seconds.
+keep the final list's length <= 60 after that, it just keep the data of recent 60 seconds.
+
+the temperary list should be cleared after that. 
