@@ -14,10 +14,7 @@ eg, the data format looks like:
 {
     "host": "#1",
     "port": 9000,
-    "counts": {
-        "http requests": 1,
-        "ws messages received": 2,
-    },
+    "counts": [1, 2]
 }
 ```
 
@@ -26,39 +23,27 @@ eg, the data format looks like:
 eg, the data format looks like:
 ```json
 {
-    "time": "09:00:00",
+    "time": 1462577597380,
     "nodes": [
         {
             "host": "#1",
             "port": 9000,
-            "counts": {
-                "http requests": 1,
-                "ws messages received": 2,
-            },
+            "counts": [1, 2]
         },
         {
             "host": "#1",
             "port": 9001,
-            "counts": {
-                "http requests": 3,
-                "ws messages received": 4,
-            },
+            "counts": [3, 4]
         },
         {
             "host": "#2",
             "port": 9000,
-            "counts": {
-                "http requests": 5,
-                "ws messages received": 6,
-            },
+            "counts": [5, 6]
         },
         {
             "host": "#2",
             "port": 9001,
-            "counts": {
-                "http requests": 7,
-                "ws messages received": 8,
-            },
+            "counts": [7, 8]
         }
     ]
 }

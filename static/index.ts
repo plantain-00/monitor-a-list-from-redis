@@ -1,25 +1,12 @@
-declare var io;
-declare var Chart;
-declare var moment;
+declare const io;
+declare const Morris;
+declare const $;
+declare const moment;
 
-var socket = io("/");
+const socket = io("/");
 
-var currentContext = (document.getElementById("currentChart") as any).getContext("2d");
-var currentChart;
-var historyContext = (document.getElementById("historyChart") as any).getContext("2d");
-var historyChart;
-
-Chart.defaults.global.responsive = false;
-Chart.defaults.global.animation.duration = 0;
-
-var sources = [
-    { label: "http requests" },
-    { label: "ws messages received" },
-    { label: "ws messages sent" },
-    { label: "ws connections" },
-    { label: "redis commands sent" },
-    { label: "redis messages received" },
-    { label: "api requests sent" },
+const sources = [
+    { name: "http requests", description: "http requests count" },
 ];
 
 interface Node {
@@ -27,93 +14,128 @@ interface Node {
     nodes: {
         host: string;
         port: number;
-        counts: { [key: string]: number };
+        counts: number[];
     }[];
 }
 
+interface Option {
+    element: string;
+    data: any[];
+    xkey: string;
+    ykeys: string[];
+    labels: string[];
+    smooth?: boolean;
+    dateFormat?: Function;
+}
+
+const historyOptions: Option[] = [];
+const currentOptions: Option[] = [];
+const historyAreas: any[] = [];
+const currentAreas: any[] = [];
+for (let i = 0; i < sources.length; i++) {
+    const source = sources[i];
+    historyOptions.push({
+        element: "history " + source.name,
+        data: [],
+        xkey: "time",
+        ykeys: [],
+        labels: [],
+        smooth: false,
+        dateFormat: x => {
+            return moment(x).format("YYYY-MM-DD HH:mm:ss");
+        },
+    });
+    currentOptions.push({
+        element: "current " + source.name,
+        data: [],
+        xkey: "time",
+        ykeys: [],
+        labels: [],
+        smooth: false,
+        dateFormat: x => {
+            return moment(x).format("YYYY-MM-DD HH:mm:ss");
+        },
+    });
+    $("#container").append(`<div><h4>${i + 1} ${source.description}</h4><div id="current ${source.name}" class="graph"></div><div id="history ${source.name}" class="graph"></div></div>`);
+}
+
 socket.on("history_data", function (data: string[]) {
-    var currentDatasets: { label: string; data: number[]; }[] = [];
-    var historyDatasets: { label: string; data: number[]; }[] = [];
+    for (const point of data) {
+        const count: Node = JSON.parse(point);
 
-    var currentLabels: string[] = [];
-    var historyLabels: string[] = [];
+        for (let i = 0; i < sources.length; i++) {
+            const historyOption = historyOptions[i];
+            const currentOption = currentOptions[i];
+            const historyChartData = {
+                time: count.time,
+            };
+            const currentChartData = {
+                time: count.time,
+            };
+            historyOption.data.push(historyChartData);
+            currentOption.data.push(currentChartData);
 
-    for (var i = 0; i < sources.length; i++) {
-        currentDatasets.push({
-            label: sources[i].label,
-            data: [],
-        });
-        historyDatasets.push({
-            label: sources[i].label,
-            data: [],
-        });
-    }
-
-    for (var i = 0; i < data.length; i++) {
-        var count: Node = JSON.parse(data[i]);
-
-        for (var j = 0; j < sources.length; j++) {
-            var c = 0;
-            for (var k = 0; k < count.nodes.length; k++) {
-                c += count.nodes[k].counts[sources[j].label];
+            for (const node of count.nodes) {
+                const nodeName = `${node.host}:${node.port}`;
+                if (historyOption.ykeys.every(key => key !== nodeName)) {
+                    historyOption.ykeys.push(nodeName);
+                    historyOption.labels.push(nodeName);
+                    currentOption.ykeys.push(nodeName);
+                    currentOption.labels.push(nodeName);
+                }
+                historyChartData[nodeName] = node.counts[i];
+                currentChartData[nodeName] = node.counts[i];
             }
-            currentDatasets[j].data.push(c);
-            historyDatasets[j].data.push(c);
         }
-
-        currentLabels.push(count.time);
-        historyLabels.push(count.time);
     }
 
-    currentChart = new Chart(currentContext, {
-        type: "line",
-        data: {
-            labels: currentLabels,
-            datasets: currentDatasets
-        },
-        options: {}
-    });
-    historyChart = new Chart(historyContext, {
-        type: "line",
-        data: {
-            labels: historyLabels,
-            datasets: historyDatasets
-        },
-        options: {}
-    });
+    for (const option of historyOptions) {
+        historyAreas.push(Morris.Area(option));
+    }
+    for (const option of currentOptions) {
+        currentAreas.push(Morris.Area(option));
+    }
 });
 
-var historyUpdateSeconds = 0;
+let historyUpdateSeconds = 0;
 
-socket.on("data", function (data: string) {
-    var time = moment().format("HH:mm:ss");
+socket.on("data", function (point: string) {
+    const count: Node = JSON.parse(point);
 
-    currentChart.data.labels.push(time);
-    if (currentChart.data.labels.length > 60) {
-        currentChart.data.labels.shift();
+    const time = Date.now();
+
+    for (let i = 0; i < sources.length; i++) {
+        const historyOption = historyOptions[i];
+        const currentOption = currentOptions[i];
+        const historyChartData = {
+            time: count.time,
+        };
+        const currentChartData = {
+            time: count.time,
+        };
+        historyOption.data.push(historyChartData);
+        currentOption.data.push(currentChartData);
+
+        for (const node of count.nodes) {
+            const nodeName = `${node.host}:${node.port}`;
+            historyChartData[nodeName] = node.counts[i];
+            currentChartData[nodeName] = node.counts[i];
+        }
+
+        if (currentOption.data.length > 60) {
+            currentOption.data.shift();
+        }
     }
 
-    historyChart.data.labels.push(time);
-
-    var count: Node = JSON.parse(data);
-    for (var i = 0; i < sources.length; i++) {
-        var c = 0;
-        for (var k = 0; k < count.nodes.length; k++) {
-            c += count.nodes[k].counts[sources[i].label];
-        }
-        currentChart.data.datasets[i].data.push(c);
-        if (currentChart.data.datasets[i].data.length > 60) {
-            currentChart.data.datasets[i].data.shift();
-        }
-
-        historyChart.data.datasets[i].data.push(c);
+    for (let i = 0; i < sources.length; i++) {
+        currentAreas[i].setData(currentOptions[i].data);
     }
-
-    currentChart.update();
 
     if (historyUpdateSeconds <= 0) {
-        historyChart.update();
-        historyUpdateSeconds = 10;
+        for (let i = 0; i < sources.length; i++) {
+            historyAreas[i].setData(historyOptions[i].data);
+        }
+        historyUpdateSeconds = 30;
     }
     historyUpdateSeconds--;
 });
