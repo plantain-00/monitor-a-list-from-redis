@@ -6,7 +6,16 @@ declare const moment;
 const socket = io("/");
 
 const sources = [
-    { name: "http requests", description: "http requests count" },
+    { name: "http requests", description: "HTTP请求数" },
+    { name: "http responses time", description: "HTTP响应耗时（毫秒）" },
+    { name: "ws messages received", description: "接收的WebSocket消息数" },
+    { name: "ws messages sent", description: "发出的WebSocket消息数" },
+    { name: "ws connections", description: "WebSocket连接数" },
+    { name: "redis commands sent", description: "发出的Redis命令数" },
+    { name: "redis messages received", description: "订阅的Redis消息数" },
+    { name: "api requests sent", description: "发出的API请求数" },
+    { name: "api requests time", description: "API请求耗时（毫秒）" },
+    { name: "errors", description: "出现的错误数" },
 ];
 
 interface Node {
@@ -26,6 +35,7 @@ interface Option {
     labels: string[];
     smooth?: boolean;
     dateFormat?: Function;
+    pointSize?: number;
 }
 
 const historyOptions: Option[] = [];
@@ -44,6 +54,7 @@ for (let i = 0; i < sources.length; i++) {
         dateFormat: x => {
             return moment(x).format("YYYY-MM-DD HH:mm:ss");
         },
+        pointSize: 1,
     });
     currentOptions.push({
         element: "current " + source.name,
@@ -55,6 +66,7 @@ for (let i = 0; i < sources.length; i++) {
         dateFormat: x => {
             return moment(x).format("YYYY-MM-DD HH:mm:ss");
         },
+        pointSize: 1,
     });
     $("#container").append(`<div><h4>${i + 1} ${source.description}</h4><div id="current ${source.name}" class="graph"></div><div id="history ${source.name}" class="graph"></div></div>`);
 }

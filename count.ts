@@ -25,6 +25,7 @@ const key = "counts";
 
 setInterval(async () => {
     const count = await client.lindex(key, 0);
+    console.log(count);
     server.emit("data", count);
 }, 1000);
 
