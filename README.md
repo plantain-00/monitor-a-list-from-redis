@@ -1,4 +1,9 @@
+[![Dependency Status](https://david-dm.org/plantain-00/monitor-a-list-from-redis.svg)](https://david-dm.org/plantain-00/monitor-a-list-from-redis)
+[![devDependency Status](https://david-dm.org/plantain-00/monitor-a-list-from-redis/dev-status.svg)](https://david-dm.org/plantain-00/monitor-a-list-from-redis#info=devDependencies)
+[![Build Status](https://travis-ci.org/plantain-00/monitor-a-list-from-redis.svg?branch=master)](https://travis-ci.org/plantain-00/monitor-a-list-from-redis)
+
 # monitor-a-list-from-redis
+
 A simple tool to watch some realtime data from a redis source
 
 ## collect data

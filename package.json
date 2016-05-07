@@ -2,9 +2,10 @@
   "name": "monitor-a-list-from-redis",
   "version": "1.0.0",
   "description": "A simple tool to watch some realtime data from a redis source",
-  "main": "index.js",
+  "main": "count.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tslint": "tslint 'static/*.ts' '*.ts'",
+    "check": "npm-check -u"
   },
   "repository": {
     "type": "git",
