@@ -5,7 +5,9 @@
   "main": "count.js",
   "scripts": {
     "tslint": "tslint 'static/*.ts' '*.ts'",
-    "check": "npm-check -u"
+    "check": "npm-check -u",
+    "init": "npm i -g typescript tsd tslint npm-check",
+    "restore": "tsd install && npm i"
   },
   "repository": {
     "type": "git",
