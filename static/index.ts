@@ -2,20 +2,23 @@ declare const io;
 declare const Morris;
 declare const $;
 declare const moment;
+declare const Vue;
 
 const socket = io("/");
 
 const sources = [
-    { name: "http requests", description: "HTTP请求数" },
-    { name: "http responses time", description: "HTTP响应耗时（毫秒）" },
-    { name: "ws messages received", description: "接收的WebSocket消息数" },
-    { name: "ws messages sent", description: "发出的WebSocket消息数" },
-    { name: "ws connections", description: "WebSocket连接数" },
-    { name: "redis commands sent", description: "发出的Redis命令数" },
-    { name: "redis messages received", description: "订阅的Redis消息数" },
-    { name: "api requests sent", description: "发出的API请求数" },
-    { name: "api requests time", description: "API请求耗时（毫秒）" },
+    { name: "http-requests", description: "HTTP请求数" },
+    { name: "http-responses-time", description: "HTTP响应耗时（毫秒）" },
+    { name: "ws-messages-received", description: "接收的WebSocket消息数" },
+    { name: "ws-messages-sent", description: "发出的WebSocket消息数" },
+    { name: "ws-connections", description: "WebSocket连接数" },
+    { name: "redis-commands-sent", description: "发出的Redis命令数" },
+    { name: "redis-messages-received", description: "订阅的Redis消息数" },
+    { name: "api-requests-sent", description: "发出的API请求数" },
+    { name: "api-requests-time", description: "API请求耗时（毫秒）" },
     { name: "errors", description: "出现的错误数" },
+    { name: "cache-hit", description: "缓存命中数" },
+    { name: "cache-miss", description: "缓存未命中数" },
 ];
 
 interface Node {
@@ -38,14 +41,25 @@ interface Option {
     pointSize?: number;
 }
 
+const vue = new Vue({
+    el: "#container",
+    data: {
+        charts: [],
+    },
+});
+
 const historyOptions: Option[] = [];
 const currentOptions: Option[] = [];
 const historyAreas: any[] = [];
 const currentAreas: any[] = [];
+const currentElements: HTMLElement[] = [];
+const historyUpdateSeconds: number[] = [];
 for (let i = 0; i < sources.length; i++) {
     const source = sources[i];
+    const historyId = "history-" + source.name;
+    const currentId = "current-" + source.name;
     historyOptions.push({
-        element: "history " + source.name,
+        element: historyId,
         data: [],
         xkey: "time",
         ykeys: [],
@@ -57,7 +71,7 @@ for (let i = 0; i < sources.length; i++) {
         pointSize: 1,
     });
     currentOptions.push({
-        element: "current " + source.name,
+        element: currentId,
         data: [],
         xkey: "time",
         ykeys: [],
@@ -68,7 +82,25 @@ for (let i = 0; i < sources.length; i++) {
         },
         pointSize: 1,
     });
-    $("#container").append(`<div><h4>${i + 1} ${source.description}</h4><div id="current ${source.name}" class="graph"></div><div id="history ${source.name}" class="graph"></div></div>`);
+    vue.charts.push({
+        title: `${i + 1}. ${source.description}`,
+        id: source.name,
+    });
+
+    historyUpdateSeconds.push(0);
+
+    Vue.nextTick(() => {
+        currentElements.push(document.getElementById(currentId));
+    });
+}
+
+function isElementInViewport(element) {
+    const rect = element.getBoundingClientRect();
+
+    return rect.bottom > 0 &&
+        rect.right > 0 &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.top < (window.innerHeight || document.documentElement.clientHeight);
 }
 
 socket.on("history_data", function (data: string[]) {
@@ -101,15 +133,11 @@ socket.on("history_data", function (data: string[]) {
         }
     }
 
-    for (const option of historyOptions) {
-        historyAreas.push(Morris.Area(option));
-    }
-    for (const option of currentOptions) {
-        currentAreas.push(Morris.Area(option));
+    for (let i = 0; i < sources.length; i++) {
+        historyAreas.push(Morris.Area(historyOptions[i]));
+        currentAreas.push(Morris.Area(currentOptions[i]));
     }
 });
-
-let historyUpdateSeconds = 0;
 
 socket.on("data", function (point: string) {
     const count: Node = JSON.parse(point);
@@ -140,14 +168,15 @@ socket.on("data", function (point: string) {
     }
 
     for (let i = 0; i < sources.length; i++) {
-        currentAreas[i].setData(currentOptions[i].data);
-    }
-
-    if (historyUpdateSeconds <= 0) {
-        for (let i = 0; i < sources.length; i++) {
-            historyAreas[i].setData(historyOptions[i].data);
+        const isInViewport = isElementInViewport(currentElements[i]);
+        if (isInViewport) {
+            currentAreas[i].setData(currentOptions[i].data);
         }
-        historyUpdateSeconds = 30;
+
+        if (isInViewport && historyUpdateSeconds[i] <= 0) {
+            historyAreas[i].setData(historyOptions[i].data);
+            historyUpdateSeconds[i] = 30;
+        }
+        historyUpdateSeconds[i]--;
     }
-    historyUpdateSeconds--;
 });

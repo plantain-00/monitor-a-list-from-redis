@@ -5,21 +5,48 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link href="bootstrap.min.css" rel="stylesheet">
     <style>
         .graph {
             width: 45%;
             display: inline-block;
         }
+        
+        .menu {
+            right: 10px;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+        }
+        
+        .btn-link {
+            white-space: normal;
+            display: inline;
+        }
     </style>
 </head>
 
 <body>
-    <div id="container"></div>
+    <div id="container">
+        <ul class="menu list-unstyled">
+            <li v-for="chart in charts">
+                <a href="#{{chart.id}}" class="btn btn-link">{{chart.title}}</a>
+            </li>
+        </ul>
+        <div>
+            <div v-for="chart in charts">
+                <h4 id="{{chart.id}}">{{chart.title}}</h4>
+                <div id="current-{{chart.id}}" class="graph"></div>
+                <div id="history-{{chart.id}}" class="graph"></div>
+            </div>
+        </div>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="moment.min.js"></script>
     <script src="raphael-min.js"></script>
     <script src="jquery-1.8.2.min.js"></script>
     <script src="morris-0.4.1.min.js"></script>
+    <script src="vue.min.js"></script>
     <script src="index.js"></script>
 </body>
 
