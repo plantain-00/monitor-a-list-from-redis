@@ -8,12 +8,11 @@
     <link href="bootstrap.min.css" rel="stylesheet">
     <style>
         .graph {
-            width: 45%;
             display: inline-block;
         }
         
         .menu {
-            right: 10px;
+            left: 10px;
             width: 200px;
             position: fixed;
             z-index: 1;
@@ -22,6 +21,22 @@
         .btn-link {
             white-space: normal;
             display: inline;
+        }
+        
+        .content {
+            margin-left: 210px;
+        }
+        
+        canvas {
+            -moz-box-shadow: 0 0 5px gray;
+            -webkit-box-shadow: 0 0 5px gray;
+            box-shadow: 0 0 5px gray;
+        }
+        
+        canvas:hover {
+            -moz-box-shadow: 0 0 10px gray;
+            -webkit-box-shadow: 0 0 10px gray;
+            box-shadow: 0 0 10px gray;
         }
     </style>
 </head>
@@ -33,19 +48,16 @@
                 <a href="#{{chart.id}}" class="btn btn-link">{{chart.title}}</a>
             </li>
         </ul>
-        <div>
+        <div class="content">
             <div v-for="chart in charts">
-                <h4 id="{{chart.id}}">{{chart.title}}</h4>
-                <div id="current-{{chart.id}}" class="graph"></div>
-                <div id="history-{{chart.id}}" class="graph"></div>
+                <h4 id="{{chart.id}}" style="padding-top: 10px;">{{chart.title}}{{chart.unit}}</h4>
+                <canvas id="current-{{chart.id}}" class="graph" width="1000" height="200"></canvas>
             </div>
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="moment.min.js"></script>
-    <script src="raphael-min.js"></script>
-    <script src="jquery-1.8.2.min.js"></script>
-    <script src="morris-0.4.1.min.js"></script>
+    <script src="Chart.min.js"></script>
     <script src="vue.min.js"></script>
     <script src="index.js"></script>
 </body>

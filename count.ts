@@ -30,6 +30,6 @@ setInterval(async () => {
 }, 1000);
 
 server.on("connection", async (socket) => {
-    const count: string[] = await client.lrange(key, 0, 60);
+    const count: string[] = await client.lrange(key, 0, 300);
     socket.emit("history_data", count.reverse());
 });

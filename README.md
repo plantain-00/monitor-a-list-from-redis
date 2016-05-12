@@ -54,6 +54,6 @@ eg, the data format looks like:
 }
 ```
 
-keep the final list's length <= 60 after that, it just keep the data of recent 60 seconds.
+keep the final list's length <= 300 after that, it just keep the data of recent 5 minutes.
 
 the temperary list should be cleared after that. 
