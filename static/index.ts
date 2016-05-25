@@ -1,5 +1,5 @@
+/// <reference path="../typings/tsd.d.ts" />
 declare const io;
-declare const moment;
 declare const Vue;
 declare const Chart;
 
@@ -20,6 +20,7 @@ const sources: { name: string; description: string; willSum: boolean; compute?: 
     { name: "cache-miss", description: "cache未命中数", order: 5.2, willSum: true },
     { name: "restart-affect", description: "重启影响的请求数", order: 7.1, willSum: true },
     { name: "high-frequency-http-requests", description: "HTTP高频请求数", order: 1.4, willSum: true },
+    { name: "short-messages", description: "短信数", order: 8.1, willSum: true },
     { name: "http-average-responses-time", description: "HTTP响应平均耗时", order: 1.1, willSum: false, unit: "ms", compute: (array: number[]) => array[0] === 0 ? 0 : Math.round(array[1] / array[0]) },
     { name: "api-average-requests-time", description: "API请求平均耗时", order: 4.1, willSum: false, unit: "ms", compute: (array: number[]) => array[7] === 0 ? 0 : Math.round(array[8] / array[7]) },
     { name: "cache-hit-rate", description: "cache命中率", order: 5.1, willSum: false, unit: "%", compute: (array: number[]) => array[10] === 0 ? 0 : Math.round(100.0 * array[10] / (array[10] + array[11])) },
@@ -47,8 +48,6 @@ const chartDatas: {
         backgroundColor?: any;
     }[];
 }[] = [];
-
-console.log("the data is available as `chartDatas`");
 
 for (let i = 0; i < sources.length; i++) {
     const source = sources[i];
@@ -136,12 +135,26 @@ function appendChartData(nodeInfo: {
             } else {
                 let color = getColor(nodeName);
 
+                const length = chartDatas[i].labels.length - 1;
+                let data: number[] = [];
+                for (let j = 0; j < length; j++) {
+                    data.push(0);
+                }
+                data.push(count);
                 chartDatas[i].datasets.push({
                     label: nodeName,
-                    data: [count],
+                    data: data,
                     borderColor: color,
                     backgroundColor: color,
                 });
+            }
+        }
+
+        for (const dataset of chartDatas[i].datasets) {
+            const node = find(nodeInfo.nodes, n => `${n.host}:${n.port}` === dataset.label);
+            if (!node) {
+                dataset.data.push(0);
+                trimHistory(dataset.data);
             }
         }
 
