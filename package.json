@@ -5,7 +5,6 @@
   "main": "count.js",
   "scripts": {
     "tslint": "tslint 'static/*.ts' '*.ts'",
-    "check": "npm-check -u",
     "init": "npm i -g typescript tsd tslint npm-check",
     "restore": "tsd install && npm i"
   },
@@ -21,7 +20,7 @@
   "homepage": "https://github.com/plantain-00/monitor-a-list-from-redis#readme",
   "dependencies": {
     "express": "^4.13.4",
-    "ioredis": "^1.15.1",
-    "socket.io": "^1.4.5"
+    "ioredis": "^2.0.0",
+    "socket.io": "^1.4.6"
   }
 }
