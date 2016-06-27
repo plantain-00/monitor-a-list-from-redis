@@ -143,7 +143,7 @@ function appendChartData(nodeInfo: {
                 data.push(count);
                 chartDatas[i].datasets.push({
                     label: nodeName,
-                    data: data,
+                    data,
                     borderColor: color,
                     backgroundColor: color,
                 });
