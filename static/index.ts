@@ -1,7 +1,8 @@
-/// <reference path="../typings/tsd.d.ts" />
-declare const io;
-declare const Vue;
-declare const Chart;
+/// <reference path="../node_modules/@types/moment/index.d.ts"/>
+
+declare const io: any;
+declare const Vue: any;
+declare const Chart: any;
 
 const socket = io("/");
 
@@ -64,13 +65,13 @@ for (let i = 0; i < sources.length; i++) {
     });
 }
 
-function find<T>(array: T[], condition: (element: T) => boolean): T {
+function find<T>(array: T[], condition: (element: T) => boolean): T | undefined {
     for (const element of array) {
         if (condition(element)) {
             return element;
         }
     }
-    return null;
+    return undefined;
 }
 
 const colors = ["#4BC0C0", "#FFA6B8", "#36A2EB", "#FFCE56", "#979D91", "#A71D1D", "#714096", "#8CCB2A", "#ED8618", "#6B720C"];
@@ -124,7 +125,7 @@ function appendChartData(nodeInfo: {
 
         for (const node of nodeInfo.nodes) {
             const nodeName = `${node.host}:${node.port}`;
-            const count = sources[i].compute ? sources[i].compute(node.counts) : node.counts[i];
+            const count = sources[i].compute ? sources[i].compute!(node.counts) : node.counts[i];
 
             const dataset = find(chartDatas[i].datasets, d => d.label === nodeName);
             if (dataset) {
@@ -219,8 +220,6 @@ function isElementInViewport(element: HTMLElement) {
 
 socket.on("data", function (point: string) {
     appendChartData(JSON.parse(point));
-
-    const time = Date.now();
 
     for (let i = 0; i < sources.length; i++) {
         const isInViewport = isElementInViewport(currentElements[i]);

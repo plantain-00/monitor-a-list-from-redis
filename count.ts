@@ -1,8 +1,7 @@
-/// <reference path="typings/tsd.d.ts" />
 import * as express from "express";
 import * as Redis from "ioredis";
 import * as socketio from "socket.io";
-const minimist: ((args: string[]) => any) = require("minimist");
+import * as minimist from "minimist";
 
 const app = express();
 
@@ -13,8 +12,8 @@ console.log(`redis host: ${redisHost}`);
 const client = new Redis(6379, redisHost, {});
 
 const argv = minimist(process.argv.slice(2));
-const port: number = argv.p || 9998;
-const host: string = argv.h || "localhost";
+const port: number = argv["p"] || 9998;
+const host: string = argv["h"] || "localhost";
 
 const httpServer = app.listen(port, host, () => {
     console.log(`monitor server is listening: ${port}`);

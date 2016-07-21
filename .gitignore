@@ -35,3 +35,4 @@ typings
 /*.js
 *.js.map
 index.js
+.vscode

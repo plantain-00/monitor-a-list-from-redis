@@ -5,7 +5,7 @@ before_install:
   - sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
 before_script:
   - npm run init
-  - npm run restore
+  - npm i
 script:
   - tsc
   - npm run tslint
