@@ -5,7 +5,7 @@
   "main": "count.js",
   "scripts": {
     "eslint": "eslint 'static/index.js' 'count.js'",
-    "init": "npm i -g typescript@beta npm-check eslint",
+    "init": "npm i -g typescript@beta npm-check eslint uglify-js clean-css",
     "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/moment/min/moment.min.js ./node_modules/chart.js/dist/Chart.min.js ./node_modules/socket.io-client/socket.io.js -o common.bundle.js",
     "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css -o common.bundle.css",
     "build": "npm run bundle-common-js && npm run bundle-common-css"
