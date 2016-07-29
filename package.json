@@ -4,8 +4,11 @@
   "description": "A simple tool to watch some realtime data from a redis source",
   "main": "count.js",
   "scripts": {
-    "tslint": "tslint 'static/*.ts' '*.ts'",
-    "init": "npm i -g typescript@beta tslint npm-check"
+    "eslint": "eslint 'static/index.js' 'count.js'",
+    "init": "npm i -g typescript@beta npm-check eslint",
+    "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/moment/min/moment.min.js ./node_modules/chart.js/dist/Chart.min.js ./node_modules/socket.io-client/socket.io.js -o common.bundle.js",
+    "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css -o common.bundle.css",
+    "build": "npm run bundle-common-js && npm run bundle-common-css"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,13 @@
     "@types/minimist": "^1.1.28",
     "@types/moment": "^2.11.28",
     "@types/socket.io": "^1.4.26",
-    "typescript": "^2.0.0"
+    "@types/socket.io-client": "^1.4.26",
+    "@types/vue": "^1.0.26",
+    "bootstrap": "^3.3.7",
+    "chart.js": "^2.2.0",
+    "moment": "^2.14.1",
+    "socket.io-client": "^1.4.8",
+    "typescript": "^2.0.0",
+    "vue": "^1.0.26"
   }
 }

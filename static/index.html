@@ -6,40 +6,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="renderer" content="webkit" />
-    <link href="bootstrap.min.css" rel="stylesheet">
-    <style>
-        .graph {
-            display: inline-block;
-        }
-        
-        .menu {
-            left: 10px;
-            width: 200px;
-            position: fixed;
-            z-index: 1;
-        }
-        
-        .btn-link {
-            white-space: normal;
-            display: inline;
-        }
-        
-        .content {
-            margin-left: 210px;
-        }
-        
-        canvas {
-            -moz-box-shadow: 0 0 5px gray;
-            -webkit-box-shadow: 0 0 5px gray;
-            box-shadow: 0 0 5px gray;
-        }
-        
-        canvas:hover {
-            -moz-box-shadow: 0 0 10px gray;
-            -webkit-box-shadow: 0 0 10px gray;
-            box-shadow: 0 0 10px gray;
-        }
-    </style>
+    <link href="common.bundle.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
 </head>
 
 <body>
@@ -56,10 +24,7 @@
             </div>
         </div>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="moment.min.js"></script>
-    <script src="Chart.min.js"></script>
-    <script src="vue.min.js"></script>
+    <script src="common.bundle.js"></script>
     <script src="index.js"></script>
 </body>
 

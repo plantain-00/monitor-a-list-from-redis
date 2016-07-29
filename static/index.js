@@ -1,12 +1,10 @@
-/// <reference path="../node_modules/@types/moment/index.d.ts"/>
-
-declare const io: any;
-declare const Vue: any;
-declare const Chart: any;
+/// <reference path="index.d.ts" />
 
 const socket = io("/");
-
-const sources: { name: string; description: string; willSum: boolean; compute?: (array: number[]) => number; order: number; unit?: string; }[] = [
+/**
+ * @type {Source[]}
+ */
+const sources = [
     { name: "http-requests", description: "HTTP请求数", order: 1.2, willSum: true },
     { name: "http-responses-time", description: "HTTP响应耗时", order: 1.3, willSum: true, unit: "ms" },
     { name: "ws-messages-received", description: "WS消息接收数", order: 2.2, willSum: true },
@@ -22,9 +20,27 @@ const sources: { name: string; description: string; willSum: boolean; compute?: 
     { name: "restart-affect", description: "重启影响的请求数", order: 7.1, willSum: true },
     { name: "high-frequency-http-requests", description: "HTTP高频请求数", order: 1.4, willSum: true },
     { name: "short-messages", description: "短信数", order: 8.1, willSum: true },
-    { name: "http-average-responses-time", description: "HTTP响应平均耗时", order: 1.1, willSum: false, unit: "ms", compute: (array: number[]) => array[0] === 0 ? 0 : Math.round(array[1] / array[0]) },
-    { name: "api-average-requests-time", description: "API请求平均耗时", order: 4.1, willSum: false, unit: "ms", compute: (array: number[]) => array[7] === 0 ? 0 : Math.round(array[8] / array[7]) },
-    { name: "cache-hit-rate", description: "cache命中率", order: 5.1, willSum: false, unit: "%", compute: (array: number[]) => array[10] === 0 ? 0 : Math.round(100.0 * array[10] / (array[10] + array[11])) },
+    {
+        name: "http-average-responses-time", description: "HTTP响应平均耗时", order: 1.1, willSum: false, unit: "ms",
+        /**
+         * @param {number[]} array
+         */
+        compute: array => array[0] === 0 ? 0 : Math.round(array[1] / array[0])
+    },
+    {
+        name: "api-average-requests-time", description: "API请求平均耗时", order: 4.1, willSum: false, unit: "ms",
+        /**
+         * @param {number[]} array
+         */
+        compute: array => array[7] === 0 ? 0 : Math.round(array[8] / array[7])
+    },
+    {
+        name: "cache-hit-rate", description: "cache命中率", order: 5.1, willSum: false, unit: "%",
+        /**
+         * @param {number[]} array
+         */
+        compute: array => array[10] === 0 ? 0 : Math.round(100.0 * array[10] / (array[10] + array[11]))
+    },
 ];
 
 Chart.defaults.global.responsive = false;
@@ -32,23 +48,23 @@ Chart.defaults.global.animation.duration = 0;
 Chart.defaults.global.elements.line.borderWidth = 0;
 Chart.defaults.global.elements.point.radius = 0;
 
+/**
+ * @type {VueModel}
+ */
 const vue = new Vue({
     el: "#container",
     data: {
+        /**
+         * @type {VueChart[]}
+         */
         charts: [],
         currentAreaIndexMouseOver: -1,
     },
 });
-
-const chartDatas: {
-    labels: string[];
-    datasets: {
-        label: string;
-        data: number[];
-        borderColor?: any;
-        backgroundColor?: any;
-    }[];
-}[] = [];
+/**
+ * @type {ChartData[]}
+ */
+const chartDatas = [];
 
 for (let i = 0; i < sources.length; i++) {
     const source = sources[i];
@@ -64,19 +80,15 @@ for (let i = 0; i < sources.length; i++) {
         datasets: [],
     });
 }
-
-function find<T>(array: T[], condition: (element: T) => boolean): T | undefined {
-    for (const element of array) {
-        if (condition(element)) {
-            return element;
-        }
-    }
-    return undefined;
-}
-
 const colors = ["#4BC0C0", "#FFA6B8", "#36A2EB", "#FFCE56", "#979D91", "#A71D1D", "#714096", "#8CCB2A", "#ED8618", "#6B720C"];
-const colorsEachNode: { [name: string]: string } = {};
-function getColor(nodeName: string) {
+/**
+ * @type {Colors}
+ */
+const colorsEachNode = {};
+/**
+ * @param {string} nodeName
+ */
+function getColor(nodeName) {
     let color = colorsEachNode[nodeName];
     if (color) {
         return color;
@@ -85,8 +97,10 @@ function getColor(nodeName: string) {
     colorsEachNode[nodeName] = colors[index];
     return colors[index];
 }
-
-function sum(i: number) {
+/**
+ * @param {number} i
+ */
+function sum(i) {
     if (!sources[i].willSum) {
         return -1;
     }
@@ -101,18 +115,17 @@ function sum(i: number) {
 }
 
 const maxCount = 300;
-function trimHistory<T>(array: T[]) {
+/**
+ * @type {TrimHistory}
+ */
+const trimHistory = function (array) {
     array.splice(0, array.length - maxCount);
 }
 
-function appendChartData(nodeInfo: {
-    time: number;
-    nodes: {
-        host: string;
-        port: number;
-        counts: number[];
-    }[];
-}) {
+/**
+ * @param {NodeInfo} nodeInfo
+ */
+function appendChartData(nodeInfo) {
     const time = moment(nodeInfo.time).format("HH:mm:ss");
     const isOverCount = chartDatas[0].labels.length >= maxCount;
 
@@ -125,9 +138,9 @@ function appendChartData(nodeInfo: {
 
         for (const node of nodeInfo.nodes) {
             const nodeName = `${node.host}:${node.port}`;
-            const count = sources[i].compute ? sources[i].compute!(node.counts) : node.counts[i];
+            const count = sources[i].compute ? sources[i].compute(node.counts) : node.counts[i];
 
-            const dataset = find(chartDatas[i].datasets, d => d.label === nodeName);
+            const dataset = chartDatas[i].datasets.find(d => d.label === nodeName);
             if (dataset) {
                 dataset.data.push(count);
                 if (willTrimHistory) {
@@ -137,7 +150,10 @@ function appendChartData(nodeInfo: {
                 let color = getColor(nodeName);
 
                 const length = chartDatas[i].labels.length - 1;
-                let data: number[] = [];
+                /**
+                 * @type {number[]}
+                 */
+                let data = [];
                 for (let j = 0; j < length; j++) {
                     data.push(0);
                 }
@@ -152,7 +168,7 @@ function appendChartData(nodeInfo: {
         }
 
         for (const dataset of chartDatas[i].datasets) {
-            const node = find(nodeInfo.nodes, n => `${n.host}:${n.port}` === dataset.label);
+            const node = nodeInfo.nodes.find(n => `${n.host}:${n.port}` === dataset.label);
             if (!node) {
                 dataset.data.push(0);
                 trimHistory(dataset.data);
@@ -163,53 +179,66 @@ function appendChartData(nodeInfo: {
     }
 }
 
-const currentCharts: any[] = [];
-const currentElements: HTMLCanvasElement[] = [];
+const currentCharts = [];
+/**
+ * @type {HTMLCanvasElement[]}
+ */
+const currentElements = [];
 
-socket.on("history_data", function (data: string[]) {
-    for (const point of data) {
-        appendChartData(JSON.parse(point));
-    }
+socket.on("history_data",
+    /**
+     * @param {string[]} data
+     */
+    function (data) {
+        for (const point of data) {
+            appendChartData(JSON.parse(point));
+        }
 
-    for (let i = 0; i < sources.length; i++) {
-        const element = document.getElementById("current-" + sources[i].name) as HTMLCanvasElement;
-        const ctx = element.getContext("2d");
-        currentCharts.push(new Chart(ctx, {
-            type: "line",
-            data: chartDatas[i],
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: "time",
-                        time: {
-                            format: "HH:mm:ss",
-                            tooltipFormat: "HH:mm:ss",
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: "Date",
-                        },
-                    }],
-                    yAxes: [{
-                        stacked: true,
-                        scaleLabel: {
-                            display: true,
-                        },
-                    }],
+        for (let i = 0; i < sources.length; i++) {
+            /**
+             * @type {HTMLCanvasElement}
+             */
+            const element = document.getElementById("current-" + sources[i].name);
+            const ctx = element.getContext("2d");
+            currentCharts.push(new Chart(ctx, {
+                type: "line",
+                data: chartDatas[i],
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: "time",
+                            time: {
+                                format: "HH:mm:ss",
+                                tooltipFormat: "HH:mm:ss",
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Date",
+                            },
+                        }],
+                        yAxes: [{
+                            stacked: true,
+                            scaleLabel: {
+                                display: true,
+                            },
+                        }],
+                    },
                 },
-            },
-        }));
-        currentElements.push(element);
-        element.onmouseover = () => {
-            vue.currentAreaIndexMouseOver = i;
-        };
-        element.onmouseout = () => {
-            vue.currentAreaIndexMouseOver = -1;
-        };
-    }
-});
+            }));
+            currentElements.push(element);
+            element.onmouseover = () => {
+                vue.currentAreaIndexMouseOver = i;
+            };
+            element.onmouseout = () => {
+                vue.currentAreaIndexMouseOver = -1;
+            };
+        }
+    });
 
-function isElementInViewport(element: HTMLElement) {
+/**
+ * @param {HTMLElement} element
+ */
+function isElementInViewport(element) {
     const rect = element.getBoundingClientRect();
 
     return rect.bottom > 0
@@ -218,13 +247,17 @@ function isElementInViewport(element: HTMLElement) {
         && rect.top < (window.innerHeight || document.documentElement.clientHeight);
 }
 
-socket.on("data", function (point: string) {
-    appendChartData(JSON.parse(point));
+socket.on("data",
+    /**
+     * @param {string} point
+     */
+    function (point) {
+        appendChartData(JSON.parse(point));
 
-    for (let i = 0; i < sources.length; i++) {
-        const isInViewport = isElementInViewport(currentElements[i]);
-        if (isInViewport && vue.currentAreaIndexMouseOver !== i) {
-            currentCharts[i].update();
+        for (let i = 0; i < sources.length; i++) {
+            const isInViewport = isElementInViewport(currentElements[i]);
+            if (isInViewport && vue.currentAreaIndexMouseOver !== i) {
+                currentCharts[i].update();
+            }
         }
-    }
-});
+    });

@@ -1,0 +1,31 @@
+.graph {
+    display: inline-block;
+}
+
+.menu {
+    left: 10px;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+}
+
+.btn-link {
+    white-space: normal;
+    display: inline;
+}
+
+.content {
+    margin-left: 210px;
+}
+
+canvas {
+    -moz-box-shadow: 0 0 5px gray;
+    -webkit-box-shadow: 0 0 5px gray;
+    box-shadow: 0 0 5px gray;
+}
+
+canvas:hover {
+    -moz-box-shadow: 0 0 10px gray;
+    -webkit-box-shadow: 0 0 10px gray;
+    box-shadow: 0 0 10px gray;
+}
