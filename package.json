@@ -2,9 +2,13 @@
   "name": "monitor-a-list-from-redis",
   "version": "1.0.0",
   "description": "A simple tool to watch some realtime data from a redis source",
-  "main": "index.js",
+  "main": "count.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "eslint": "eslint 'static/index.js' 'count.js'",
+    "init": "npm i -g typescript@beta npm-check eslint uglify-js cleancss",
+    "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/moment/min/moment.min.js ./node_modules/chart.js/dist/Chart.min.js ./node_modules/socket.io-client/socket.io.js -o static/common.bundle.js",
+    "bundle-common-css": "cleancss ./node_modules/bootstrap/dist/css/bootstrap.min.css -o static/common.bundle.css",
+    "build": "npm run bundle-common-js && npm run bundle-common-css"
   },
   "repository": {
     "type": "git",
@@ -18,7 +22,22 @@
   "homepage": "https://github.com/plantain-00/monitor-a-list-from-redis#readme",
   "dependencies": {
     "express": "^4.13.4",
-    "ioredis": "^1.15.1",
-    "socket.io": "^1.4.5"
+    "ioredis": "^2.0.0",
+    "socket.io": "^1.4.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.29",
+    "@types/ioredis": "0.0.15",
+    "@types/minimist": "^1.1.28",
+    "@types/moment": "^2.11.28",
+    "@types/socket.io": "^1.4.26",
+    "@types/socket.io-client": "^1.4.26",
+    "@types/vue": "^1.0.26",
+    "bootstrap": "^3.3.7",
+    "chart.js": "^2.2.0",
+    "moment": "^2.14.1",
+    "socket.io-client": "^1.4.8",
+    "typescript": "^2.0.0",
+    "vue": "^1.0.26"
   }
 }
