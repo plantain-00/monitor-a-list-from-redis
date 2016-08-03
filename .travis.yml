@@ -4,11 +4,10 @@ node_js:
 before_install:
   - sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
 before_script:
-  - npm run init
   - npm i
 script:
-  - tsc
-  - tsc -p static
+  - npm run compile
+  - npm run compile-static
   - npm run tslint
   - npm run build
 env:
