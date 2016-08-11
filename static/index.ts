@@ -1,20 +1,12 @@
 /// <reference path="../node_modules/@types/moment/index.d.ts"/>
 /// <reference path="../node_modules/@types/socket.io-client/index.d.ts"/>
 /// <reference path="../node_modules/@types/vue/index.d.ts"/>
+/// <reference path="../node_modules/@types/chart.js/chart.js.d.ts"/>
 type Source = {
     name: string;
     description: string;
     willSum: boolean;
     compute?: (array: number[]) => number; order: number; unit?: string;
-}
-type ChartData = {
-    labels: string[];
-    datasets: {
-        label: string;
-        data: number[];
-        borderColor?: any;
-        backgroundColor?: any;
-    }[];
 }
 type Colors = { [name: string]: string };
 type NodeInfo = {
@@ -34,7 +26,6 @@ type VueChart = {
 }
 
 const socket = io("/");
-declare const Chart: any;
 const sources: Source[] = [
     { name: "http-requests", description: "HTTP请求数", order: 1.2, willSum: true },
     { name: "http-responses-time", description: "HTTP响应耗时", order: 1.3, willSum: true, unit: "ms" },
@@ -57,9 +48,9 @@ const sources: Source[] = [
 ];
 
 Chart.defaults.global.responsive = false;
-Chart.defaults.global.animation.duration = 0;
-Chart.defaults.global.elements.line.borderWidth = 0;
-Chart.defaults.global.elements.point.radius = 0;
+Chart.defaults.global.animation!.duration = 0;
+Chart.defaults.global.elements!.line!.borderWidth = 0;
+Chart.defaults.global.elements!.point!.radius = 0;
 
 const vue: vuejs.Vue & {
     charts?: VueChart[],
@@ -71,7 +62,7 @@ const vue: vuejs.Vue & {
         currentAreaIndexMouseOver: -1,
     },
 });
-const chartDatas: ChartData[] = [];
+const chartDatas: LinearChartData[] = [];
 
 for (let i = 0; i < sources.length; i++) {
     const source = sources[i];
@@ -110,11 +101,10 @@ function sum(i: number) {
     if (!sources[i].willSum) {
         return -1;
     }
-    const chartData = chartDatas[i];
     let result = 0;
-    for (const dataset of chartData.datasets) {
-        for (const data of dataset.data) {
-            result += data;
+    for (const dataset of chartDatas[i].datasets!) {
+        for (const data of dataset.data!) {
+            result += (data as number);
         }
     }
     return result;
@@ -127,35 +117,35 @@ function trimHistory<T>(array: T[]) {
 
 function appendChartData(nodeInfo: NodeInfo) {
     const time = moment(nodeInfo.time).format("HH:mm:ss");
-    const isOverCount = chartDatas[0].labels.length >= maxCount;
+    const isOverCount = chartDatas[0].labels!.length >= maxCount;
 
     for (let i = 0; i < sources.length; i++) {
         const willTrimHistory = isOverCount && vue.currentAreaIndexMouseOver !== i;
-        chartDatas[i].labels.push(time);
+        chartDatas[i].labels!.push(time);
         if (willTrimHistory) {
-            trimHistory(chartDatas[i].labels);
+            trimHistory(chartDatas[i].labels!);
         }
 
         for (const node of nodeInfo.nodes) {
             const nodeName = `${node.host}:${node.port}`;
             const count = sources[i].compute ? sources[i].compute!(node.counts) : node.counts[i];
 
-            const dataset = find(chartDatas[i].datasets, d => d.label === nodeName);
+            const dataset = find(chartDatas[i].datasets!, d => d.label === nodeName);
             if (dataset) {
-                dataset.data.push(count);
+                (dataset.data as number[]).push(count);
                 if (willTrimHistory) {
-                    trimHistory(dataset.data);
+                    trimHistory(dataset.data as number[]);
                 }
             } else {
                 let color = getColor(nodeName);
 
-                const length = chartDatas[i].labels.length - 1;
+                const length = chartDatas[i].labels!.length - 1;
                 const data: number[] = [];
                 for (let j = 0; j < length; j++) {
                     data.push(0);
                 }
                 data.push(count);
-                chartDatas[i].datasets.push({
+                chartDatas[i].datasets!.push({
                     label: nodeName,
                     data,
                     borderColor: color,
@@ -164,11 +154,11 @@ function appendChartData(nodeInfo: NodeInfo) {
             }
         }
 
-        for (const dataset of chartDatas[i].datasets) {
+        for (const dataset of chartDatas[i].datasets!) {
             const node = find(nodeInfo.nodes, n => `${n.host}:${n.port}` === dataset.label);
             if (!node) {
-                dataset.data.push(0);
-                trimHistory(dataset.data);
+                (dataset.data as number[]).push(0);
+                trimHistory(dataset.data as number[]);
             }
         }
 
@@ -187,7 +177,7 @@ socket.on("history_data", function (data: string[]) {
     for (let i = 0; i < sources.length; i++) {
         const element = document.getElementById("current-" + sources[i].name) as HTMLCanvasElement;
         const ctx = element.getContext("2d");
-        currentCharts.push(new Chart(ctx, {
+        currentCharts.push(new Chart(ctx!, {
             type: "line",
             data: chartDatas[i],
             options: {
