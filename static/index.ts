@@ -1,7 +1,7 @@
-/// <reference path="../node_modules/@types/moment/index.d.ts"/>
-/// <reference path="../node_modules/@types/socket.io-client/index.d.ts"/>
-/// <reference path="../node_modules/@types/vue/index.d.ts"/>
-/// <reference path="../node_modules/@types/chart.js/chart.js.d.ts"/>
+/// <reference types="moment"/>
+/// <reference types="socket.io-client"/>
+/// <reference types="vue"/>
+/// <reference types="chart.js"/>
 type Source = {
     name: string;
     description: string;
