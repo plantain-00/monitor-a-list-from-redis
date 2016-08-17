@@ -2,7 +2,7 @@
   "name": "monitor-a-list-from-redis",
   "version": "1.0.0",
   "description": "A simple tool to watch some realtime data from a redis source",
-  "main": "count.js",
+  "main": "dist/count.js",
   "scripts": {
     "tslint": "tslint \"static/index.ts\" \"src/count.ts\"",
     "bundle-index-js": "uglifyjs static/index.js -o static/index.bundle.js",
@@ -47,5 +47,6 @@
     "typescript": "^2.0.0",
     "uglify-js": "^2.7.0",
     "vue": "^1.0.26"
-  }
+  },
+  "types": "./dist/robot.d.ts"
 }
