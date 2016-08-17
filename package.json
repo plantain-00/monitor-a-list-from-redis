@@ -4,7 +4,7 @@
   "description": "A simple tool to watch some realtime data from a redis source",
   "main": "count.js",
   "scripts": {
-    "tslint": "tslint 'static/index.ts' 'count.ts'",
+    "tslint": "tslint \"static/index.ts\" \"src/count.ts\"",
     "bundle-index-js": "uglifyjs static/index.js -o static/index.bundle.js",
     "bundle-common-js": "uglifyjs ./node_modules/vue/dist/vue.min.js ./node_modules/moment/min/moment.min.js ./node_modules/chart.js/dist/Chart.min.js ./node_modules/socket.io-client/socket.io.js -o static/common.bundle.js",
     "bundle-index-css": "cleancss static/index.css -o static/index.bundle.css",
@@ -34,7 +34,6 @@
     "@types/express": "^4.0.30",
     "@types/ioredis": "0.0.16",
     "@types/minimist": "^1.1.28",
-    "@types/moment": "^2.11.29",
     "@types/socket.io": "^1.4.26",
     "@types/socket.io-client": "^1.4.26",
     "@types/vue": "^1.0.27",

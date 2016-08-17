@@ -1,0 +1,9 @@
+.vscode
+src
+tslint.json
+.travis.yml
+tsconfig.json
+static/index.css
+static/index.ejs.html
+static/index.js
+static/index.ts
