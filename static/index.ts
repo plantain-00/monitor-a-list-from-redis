@@ -170,7 +170,7 @@ function appendChartData(nodeInfo: NodeInfo) {
 const currentCharts: any[] = [];
 const currentElements: HTMLCanvasElement[] = [];
 
-socket.on("history_data", function (data: string[]) {
+socket.on("history_data", (data: string[]) => {
     for (const point of data) {
         appendChartData(JSON.parse(point));
     }
@@ -222,7 +222,7 @@ function isElementInViewport(element: HTMLElement) {
         && rect.top < (window.innerHeight || document.documentElement.clientHeight);
 }
 
-socket.on("data", function (point: string) {
+socket.on("data", (point: string) => {
     appendChartData(JSON.parse(point));
 
     for (let i = 0; i < sources.length; i++) {
