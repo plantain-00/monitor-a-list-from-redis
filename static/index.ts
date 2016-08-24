@@ -2,6 +2,7 @@
 /// <reference types="socket.io-client"/>
 /// <reference types="vue"/>
 /// <reference types="chart.js"/>
+declare const moment: any;
 type Source = {
     name: string;
     description: string;
