@@ -1,8 +1,5 @@
-/// <reference types="moment"/>
-/// <reference types="socket.io-client"/>
-/// <reference types="vue"/>
-/// <reference types="chart.js"/>
-declare const moment: any;
+/// <reference path="./libs.d.ts" />
+
 type Source = {
     name: string;
     description: string;
