@@ -50,14 +50,23 @@ Chart.defaults.global.animation!.duration = 0;
 Chart.defaults.global.elements!.line!.borderWidth = 0;
 Chart.defaults.global.elements!.point!.radius = 0;
 
-const vue: vuejs.Vue & {
+type VueData = {
     charts?: VueChart[],
     currentAreaIndexMouseOver?: number,
-} = new Vue({
+}
+
+const vue: vuejs.Vue & VueData = new Vue({
     el: "#container",
     data: {
         charts: [] as VueChart[],
         currentAreaIndexMouseOver: -1,
+    },
+    computed: {
+        /* tslint:disable:only-arrow-functions */
+        orderedCharts: function orderedCharts(this: VueData) {
+            return this.charts!.slice(0).sort((a, b) => a.order - b.order);
+        },
+        /* tslint:enable:only-arrow-functions */
     },
 });
 const chartDatas: LinearChartData[] = [];

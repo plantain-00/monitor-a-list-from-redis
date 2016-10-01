@@ -26,7 +26,7 @@
   "homepage": "https://github.com/plantain-00/monitor-a-list-from-redis#readme",
   "dependencies": {
     "express": "^4.14.0",
-    "ioredis": "^2.3.0",
+    "ioredis": "^2.4.0",
     "socket.io": "^1.4.8"
   },
   "devDependencies": {
@@ -39,14 +39,14 @@
     "@types/vue": "^1.0.29",
     "bootstrap": "^3.3.7",
     "chart.js": "^2.3.0",
-    "clean-css": "^3.4.19",
+    "clean-css": "^3.4.20",
     "moment": "^2.15.1",
     "rev-static": "^1.2.0",
     "socket.io-client": "^1.4.8",
     "tslint": "^3.15.1",
     "typescript": "^2.0.3",
     "uglify-js": "^2.7.3",
-    "vue": "^1.0.26"
+    "vue": "^2.0.1"
   },
   "types": "./dist/robot.d.ts"
 }
