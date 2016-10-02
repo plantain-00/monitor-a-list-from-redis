@@ -6,6 +6,10 @@
 
 A simple tool to watch some realtime data from a redis source
 
+## example
+
+![](example.png)
+
 ## collect data
 
 #### 1. for each node, count in current process

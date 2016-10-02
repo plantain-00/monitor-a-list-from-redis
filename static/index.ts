@@ -1,10 +1,12 @@
 /// <reference path="./libs.d.ts" />
 
 type Source = {
-    name: string;
-    description: string;
-    willSum: boolean;
-    compute?: (array: number[]) => number; order: number; unit?: string;
+    name: string; // the unique name
+    description: string; // the description part
+    willSum: boolean; // if true, will sum the value up, or use `compute` to get the value displayed
+    compute?: (array: number[]) => number;
+    order: number; // the order displayed
+    unit?: string; // the unit of the sumed value or computed value
 }
 type Colors = { [name: string]: string };
 type NodeInfo = {
@@ -27,22 +29,7 @@ const socket = io("/");
 const sources: Source[] = [
     { name: "http-requests", description: "HTTP请求数", order: 1.2, willSum: true },
     { name: "http-responses-time", description: "HTTP响应耗时", order: 1.3, willSum: true, unit: "ms" },
-    { name: "ws-messages-received", description: "WS消息接收数", order: 2.2, willSum: true },
-    { name: "ws-messages-sent", description: "WS消息发出数", order: 2.3, willSum: true },
-    { name: "ws-connections", description: "WS连接数", order: 2.1, willSum: false },
-    { name: "redis-commands-sent", description: "Redis发出命令数", order: 3.1, willSum: true },
-    { name: "redis-messages-received", description: "Redis订阅消息数", order: 3.2, willSum: true },
-    { name: "api-requests-sent", description: "API发出请求数", order: 4.2, willSum: true },
-    { name: "api-requests-time", description: "API请求耗时", order: 4.3, unit: "ms", willSum: true },
-    { name: "errors", description: "error数", order: 6.1, willSum: true },
-    { name: "cache-hit", description: "cache命中数", order: 5.3, willSum: true },
-    { name: "cache-miss", description: "cache未命中数", order: 5.2, willSum: true },
-    { name: "restart-affect", description: "重启影响的请求数", order: 7.1, willSum: true },
-    { name: "high-frequency-http-requests", description: "HTTP高频请求数", order: 1.4, willSum: true },
-    { name: "short-messages", description: "短信数", order: 8.1, willSum: true },
     { name: "http-average-responses-time", description: "HTTP响应平均耗时", order: 1.1, willSum: false, unit: "ms", compute: (array: number[]) => array[0] === 0 ? 0 : Math.round(array[1] / array[0]) },
-    { name: "api-average-requests-time", description: "API请求平均耗时", order: 4.1, willSum: false, unit: "ms", compute: (array: number[]) => array[7] === 0 ? 0 : Math.round(array[8] / array[7]) },
-    { name: "cache-hit-rate", description: "cache命中率", order: 5.1, willSum: false, unit: "%", compute: (array: number[]) => array[10] === 0 ? 0 : Math.round(100.0 * array[10] / (array[10] + array[11])) },
 ];
 
 Chart.defaults.global.responsive = false;
