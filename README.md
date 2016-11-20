@@ -1,6 +1,8 @@
 [![Dependency Status](https://david-dm.org/plantain-00/monitor-a-list-from-redis.svg)](https://david-dm.org/plantain-00/monitor-a-list-from-redis)
 [![devDependency Status](https://david-dm.org/plantain-00/monitor-a-list-from-redis/dev-status.svg)](https://david-dm.org/plantain-00/monitor-a-list-from-redis#info=devDependencies)
 [![Build Status](https://travis-ci.org/plantain-00/monitor-a-list-from-redis.svg?branch=master)](https://travis-ci.org/plantain-00/monitor-a-list-from-redis)
+[![npm version](https://badge.fury.io/js/monitor-a-list-from-redis.svg)](https://badge.fury.io/js/monitor-a-list-from-redis)
+[![Downloads](https://img.shields.io/npm/dm/monitor-a-list-from-redis.svg)](https://www.npmjs.com/package/monitor-a-list-from-redis)
 
 # monitor-a-list-from-redis
 
@@ -9,6 +11,10 @@ A simple tool to watch some realtime data from a redis source
 ## example
 
 ![](example.png)
+
+## install
+
+`npm i monitor-a-list-from-redis`
 
 ## collect data
 
