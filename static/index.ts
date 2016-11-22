@@ -7,7 +7,7 @@ type Source = {
     compute?: (array: number[]) => number;
     order: number; // the order displayed
     unit?: string; // the unit of the sumed value or computed value
-}
+};
 type Colors = { [name: string]: string };
 type NodeInfo = {
     time: number;
@@ -16,14 +16,14 @@ type NodeInfo = {
         port: number;
         counts: number[];
     }[];
-}
+};
 type VueChart = {
     title: string,
     id: string,
     order: number,
     unit: string,
     sum: number,
-}
+};
 
 const socket = io("/");
 const sources: Source[] = [
@@ -40,7 +40,7 @@ Chart.defaults.global.elements!.point!.radius = 0;
 type VueData = {
     charts?: VueChart[],
     currentAreaIndexMouseOver?: number,
-}
+};
 
 const vue: vuejs.Vue & VueData = new Vue({
     el: "#container",
@@ -58,8 +58,7 @@ const vue: vuejs.Vue & VueData = new Vue({
 });
 const chartDatas: LinearChartData[] = [];
 
-for (let i = 0; i < sources.length; i++) {
-    const source = sources[i];
+for (const source of sources) {
     vue.charts!.push({
         title: `${source.order}. ${source.description}`,
         id: source.name,
