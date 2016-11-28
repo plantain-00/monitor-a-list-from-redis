@@ -42,7 +42,7 @@ type VueData = {
     currentAreaIndexMouseOver?: number,
 };
 
-const vue: vuejs.Vue & VueData = new Vue({
+const vue: VueData = new Vue({
     el: "#container",
     data: {
         charts: [] as VueChart[],
