@@ -39,3 +39,4 @@ index-*.js
 index.html
 index.js
 /static/*.js.map
+dist/
