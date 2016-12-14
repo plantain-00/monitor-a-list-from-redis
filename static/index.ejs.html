@@ -6,8 +6,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="renderer" content="webkit" />
-    <link href="<%=staticCommonBundleCss %>" rel="preload" as="style" onload="this.rel='stylesheet'">
-    <link href="<%=staticIndexBundleCss %>" rel="preload" as="style" onload="this.rel='stylesheet'">
+    <link href="<%=staticCommonBundleCss %>" rel="stylesheet" crossOrigin="anonymous" integrity="<%=sri.staticCommonBundleCss %>">
+    <link href="<%=staticIndexBundleCss %>" rel="stylesheet" crossOrigin="anonymous" integrity="<%=sri.staticIndexBundleCss %>">
 </head>
 
 <body>
@@ -24,8 +24,8 @@
             </div>
         </div>
     </div>
-    <script defer="defer" src="<%=staticCommonBundleJs %>"></script>
-    <script defer="defer" src="<%=staticIndexBundleJs %>"></script>
+    <script defer="defer" src="<%=staticCommonBundleJs %>" crossOrigin="anonymous" integrity="<%=sri.staticCommonBundleJs %>"></script>
+    <script defer="defer" src="<%=staticIndexBundleJs %>" crossOrigin="anonymous" integrity="<%=sri.staticIndexBundleJs %>"></script>
 </body>
 
 </html>
